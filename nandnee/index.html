@@ -319,14 +319,6 @@ html:not(.opened) .petal{animation-play-state:paused}
   .pair{grid-template-columns:1fr 1fr}
   .grid{gap:18px}
 }
-@media (prefers-reduced-motion:reduce){
-  .rv{opacity:1;transform:none;transition:none}
-  .petal,.spark,#glitter,#petals,#fx{display:none!important}
-  .hero-bg svg{transform:none!important}
-  .door,.seal{transition:none!important}
-  .gate.go .ring,.gate.go .flash,.gate.go{animation:none!important}
-  .lantern{animation-duration:.01s!important}
-}
 
 #lantern{letter-spacing:.1em;padding:0 20px}
 .lantern::before{content:"";position:absolute;inset:-34px;border-radius:50%;background:radial-gradient(circle,rgba(255,196,86,.75) 0%,rgba(255,120,50,.38) 40%,rgba(255,90,40,0) 70%)}
@@ -743,7 +735,8 @@ html:not(.opened) .petal{animation-play-state:paused}
   var $ = function (s) { return document.querySelector(s); };
   var $$ = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
   var html = document.documentElement;
-  var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;      // 5.14
+  var RMQ = window.matchMedia('(prefers-reduced-motion: reduce)').matches;   // only parallax + smooth-scroll respect this
+  var RM = false;   // doors, petals, glitter, lanterns and reveals always play, so phones with 'reduce motion' / battery saver still see them;      // 5.14
   var TOUCH = window.matchMedia('(hover: none), (pointer: coarse)').matches;
   var PHONE = window.innerWidth < 760;
   var MAPS = 'https://maps.app.goo.gl/2ZSPZeFjEG5THPq5A';
@@ -934,7 +927,7 @@ html:not(.opened) .petal{animation-play-state:paused}
     plane.setAttribute('transform', 'translate(' + px.toFixed(1) + ' ' + py.toFixed(1) + ') rotate(' + ang.toFixed(1) + ')');
     heart.setAttribute('transform', 'translate(-52 0) rotate(' + (-ang).toFixed(1) + ') scale(1.1)');
     trailRect.setAttribute('transform', 'scale(1 ' + (py / docH).toFixed(5) + ')');
-    if (!RM) {                                                // 5.2 parallax ~35% of scroll speed
+    if (!RMQ) {                                                // 5.2 parallax ~35% of scroll speed
       var h = $('#hero').offsetHeight;
       if (sy < h + 200) {
         var v = 'translate3d(0,' + (sy * 0.35).toFixed(1) + 'px,0)';
@@ -966,7 +959,7 @@ html:not(.opened) .petal{animation-play-state:paused}
   tick(); setInterval(tick, 1000);
 
   /* ---------- buttons: Save the Date, hint, calendar ---------- */
-  function goTo(sel, block) { $(sel).scrollIntoView({ behavior: RM ? 'auto' : 'smooth', block: block || 'start' }); }
+  function goTo(sel, block) { $(sel).scrollIntoView({ behavior: RMQ ? 'auto' : 'smooth', block: block || 'start' }); }
   $('#saveDate').addEventListener('click', function () { goTo('#countdown', 'center'); });
   $('#hint').addEventListener('click', function (e) { e.preventDefault(); goTo('#invite', 'start'); });
 
