@@ -888,7 +888,7 @@ html:not(.opened) .petal{animation-play-state:paused}
   /* ---------- 5.1 opening reveal ---------- */
   var gate = $('#gate'), seal = $('#seal'), opened = false;
   /* ---------- background song (starts on the seal tap, with a mute button) ---------- */
-  var song = new Audio('song.mp3'); song.loop = true; song.volume = .6; song.preload = 'none';
+  var song = new Audio('song-48.mp3'); song.loop = true; song.volume = .6; song.preload = 'none';
   var musicBtn = $('#music'), wantMusic = true;
   function setMuted(m) { musicBtn.classList.toggle('muted', m); }
   function playSong() { var pr = song.play(); if (pr && pr.catch) pr.catch(function () { setMuted(true); }); }
