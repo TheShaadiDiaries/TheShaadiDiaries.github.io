@@ -48,12 +48,12 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Vipul &amp; Nandnee are getting married">
 <meta property="og:description" content="You are warmly invited · 11–12 December 2026 · Kabeela Resort, Jim Corbett">
-<meta property="og:url" content="https://aviralbindra07-dev.github.io/vipul/">
-<meta property="og:image" content="https://aviralbindra07-dev.github.io/vipul/og.jpg">
+<meta property="og:url" content="https://theshaadidiaries.github.io/vipul/">
+<meta property="og:image" content="https://theshaadidiaries.github.io/vipul/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://aviralbindra07-dev.github.io/vipul/og.jpg">
+<meta name="twitter:image" content="https://theshaadidiaries.github.io/vipul/og.jpg">
 <meta name="description" content="With love, we invite you to celebrate our new beginning">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%23DDD0F1'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='Georgia' font-style='italic' font-size='13' fill='%23100C18'%3EV%26N%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -330,6 +330,12 @@ html:not(.opened) .petal{animation-play-state:paused}
   .grid{gap:18px}
 }
 
+#music{position:fixed;left:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:120;width:46px;height:46px;border-radius:50%;border:1.5px solid rgba(255,255,255,.85);background:rgba(36,24,56,.82);color:#fff;display:none;place-items:center;cursor:pointer;box-shadow:0 6px 18px rgba(60,35,100,.35);-webkit-tap-highlight-color:transparent}
+#music.show{display:grid}
+#music svg{width:22px;height:22px}
+#music .off{display:none}
+#music.muted .on{display:none}
+#music.muted .off{display:block}
 #lantern{letter-spacing:.1em;padding:0 20px}
 .lantern::before{content:"";position:absolute;inset:-34px;border-radius:50%;background:radial-gradient(circle,rgba(255,196,86,.75) 0%,rgba(255,120,50,.38) 40%,rgba(255,90,40,0) 70%)}
 .lantern svg{position:relative;display:block}
@@ -736,6 +742,7 @@ html:not(.opened) .petal{animation-play-state:paused}
   <div class="ct" id="lbC" aria-live="polite">1 / 4</div>
 </div>
 
+<button id="music" type="button" aria-label="Music on or off"><svg class="on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/><path d="M3 3l18 18"/></svg></button>
 <script>
 /* ==========================================================
    SCRIPT  (vanilla JS, no libraries)
@@ -880,8 +887,20 @@ html:not(.opened) .petal{animation-play-state:paused}
 
   /* ---------- 5.1 opening reveal ---------- */
   var gate = $('#gate'), seal = $('#seal'), opened = false;
+  /* ---------- background song (starts on the seal tap, with a mute button) ---------- */
+  var song = new Audio('song.mp3'); song.loop = true; song.volume = .6; song.preload = 'none';
+  var musicBtn = $('#music'), wantMusic = true;
+  function setMuted(m) { musicBtn.classList.toggle('muted', m); }
+  function playSong() { var pr = song.play(); if (pr && pr.catch) pr.catch(function () { setMuted(true); }); }
+  musicBtn.addEventListener('click', function () {
+    if (song.paused) { wantMusic = true; setMuted(false); playSong(); } else { wantMusic = false; song.pause(); setMuted(true); }
+  });
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) song.pause(); else if (wantMusic && opened) playSong();
+  });
   function openGate() {
     if (opened) return; opened = true;
+    playSong(); musicBtn.classList.add('show');
     var r = seal.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
     gate.classList.add('go');
     if (RM) { finish(); return; }
